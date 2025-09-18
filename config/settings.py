@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_yasg",
     "corsheaders",
+
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -114,6 +116,7 @@ MEDIA_ROOT = BASE_DIR / "media"  # добавил
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "users.CustomUser"
 
 # Настройки
 REST_FRAMEWORK = {
@@ -121,7 +124,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # JWT-токенов
     ),
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",  # или IsAuthenticated вместо AllowAny
+        "rest_framework.permissions.IsAuthenticated",  # IsAuthenticated или AllowAny
     ],
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
