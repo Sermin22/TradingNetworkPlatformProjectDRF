@@ -10,15 +10,13 @@ class NetworkLinkAdmin(admin.ModelAdmin):
     list_filter = ("city", "country", "created_at")
     search_fields = ("name", "email", "city", "country")
 
-    # 1. Регистрируем действие в админке
+    # Регистрируем действие в админке
     actions = ['clear_debt']
 
-    # 2. Создаем метод действия
+    # Создаем метод действия
     def clear_debt(self, request, queryset):
-        """
-        Это метод действия, который будет вызываться когда
-        пользователь выберет это действие в админке
-        """
+        """Метод выбора действие в админке, обнуления задолженности перед поставщиком"""
+        # request - HTTP запрос c данными
         # queryset - это все объекты, отмеченные галочками
         # Массово обновляем задолженность на 0
         updated = queryset.update(debt_to_supplier=0.00)
@@ -27,10 +25,9 @@ class NetworkLinkAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f'Задолженность очищена для {updated} объектов.',
-            level=messages.SUCCESS  # Можно указать уровень сообщения
+            level=messages.SUCCESS  # Указываем уровень сообщения
         )
-
-    # 3. Добавляем описание для кнопки
+    # Добавляем описание для кнопки
     clear_debt.short_description = 'Очистить задолженность перед поставщиком'
 
 

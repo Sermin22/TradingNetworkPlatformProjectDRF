@@ -17,6 +17,7 @@ class NetworkLinkSerializer(serializers.ModelSerializer):
             'id', 'name', 'email', 'country', 'city', 'street', 'house_number', 'network_type',
             'supplier', 'debt_to_supplier', 'created_at', 'level', 'products'
         ]
+        # Исключаем из редактирования поля через API, но отображаем при GET-запросах
         read_only_fields = ['debt_to_supplier', 'created_at', 'level']
 
     def validate(self, data):
@@ -24,6 +25,8 @@ class NetworkLinkSerializer(serializers.ModelSerializer):
 
         # Получаем текущий экземпляр (если есть)
         instance = self.instance
+        # Безопасно получаем данные. Пробуем взять network_type и supplier из данных запроса,
+        # если их нет, пробуем взять их из существующего объекта, если и там нет - вернем None
         network_type = data.get('network_type', getattr(instance, 'network_type', None))
         supplier = data.get('supplier', getattr(instance, 'supplier', None))
 

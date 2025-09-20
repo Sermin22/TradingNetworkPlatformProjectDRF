@@ -29,7 +29,7 @@ class NetworkLink(models.Model):
     city = models.CharField(max_length=100, verbose_name='Город')
     street = models.CharField(max_length=255, verbose_name='Улица')
     house_number = models.CharField(max_length=20, verbose_name='Номер дома')
-    # Поле для определения типа звена сети (для валидации)
+    # Поле для определения типа звена сети для валидации
     network_type = models.CharField(
         max_length=20,
         choices=NETWORK_TYPE_CHOICES,
@@ -50,7 +50,13 @@ class NetworkLink(models.Model):
         verbose_name='Задолженность перед поставщиком'
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
-    level = models.IntegerField(choices=LEVEL_CHOICES, verbose_name='Уровень иерархии')
+    level = models.IntegerField(
+        choices=LEVEL_CHOICES,
+        null=True,  # Можно NULL в базе
+        blank=True,  # Можно пустое в формах
+        editable=False,  # Не показывать в админке и формах
+        verbose_name='Уровень иерархии'
+    )
 
     class Meta:
         verbose_name = 'Звено сети'
