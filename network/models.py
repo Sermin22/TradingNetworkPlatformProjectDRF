@@ -61,27 +61,27 @@ class NetworkLink(models.Model):
         super().clean()
 
         # Правило 1: Завод не может иметь поставщика
-        if self.network_type == 'factory' and self.supplier is not None:
+        if self.network_type == self.FACTORY and self.supplier is not None:
             raise ValidationError({'supplier': 'Завод не может иметь поставщика'})
 
         # Правило 2: Розничная сеть и ИП должны иметь поставщика
-        if self.network_type in ['retail', 'entrepreneur'] and self.supplier is None:
+        if self.network_type in [self.RETAIL, self.ENTREPRENEUR] and self.supplier is None:
             raise ValidationError({'supplier': 'Розничная сеть или ИП должны иметь поставщика'})
 
         # Правило 3: Нельзя ссылаться на самого себя
-        if self.supplier and self.supplier == self.pk:
+        if self.supplier and self.supplier == self:
             raise ValidationError({'supplier': 'Нельзя указывать самого себя в качестве поставщика'})
 
     def save(self, *args, **kwargs):
         # Автоматическое определение уровня иерархии
         if self.supplier is None:
-            self.level = 0  # Если поставщика нет, устанавливается уровень 0, это Завод
+            self.level = self.LEVEL_ZERO  # Если поставщика нет, устанавливается уровень 0, это Завод
         else:
             # Уровень = уровень поставщика + 1
-            self.level += 1
+            self.level = self.supplier.level + 1
             # Ограничиваем максимальный уровень
-            if self.level > 2:
-                self.level = 2
+            if self.level > self.LEVEL_LAST:
+                self.level = self.LEVEL_LAST
 
         super().save(*args, **kwargs)
 

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import NetworkLink, Product
 
+
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -17,4 +18,36 @@ class NetworkLinkSerializer(serializers.ModelSerializer):
             'supplier', 'debt_to_supplier', 'created_at', 'level', 'products'
         ]
         read_only_fields = ['debt_to_supplier', 'created_at', 'level']
-        # exclude = ("debt_to_supplier",)  # запрет обновления через API
+
+    def validate(self, data):
+        """Валидация бизнес-правил на уровне сериализатора"""
+
+        # Получаем текущий экземпляр (если есть)
+        instance = self.instance
+        network_type = data.get('network_type', getattr(instance, 'network_type', None))
+        supplier = data.get('supplier', getattr(instance, 'supplier', None))
+
+        # Правило 1: Завод не может иметь поставщика
+        if network_type == 'factory' and supplier is not None:
+            raise serializers.ValidationError({
+                'supplier': 'Завод не может иметь поставщика'
+            })
+
+        # Правило 2: Розничная сеть и ИП должны иметь поставщика
+        if network_type in ['retail', 'entrepreneur'] and supplier is None:
+            raise serializers.ValidationError({
+                'supplier': 'Розничная сеть или ИП должны иметь поставщика'
+            })
+
+        # Правило 3: Нельзя ссылаться на самого себя
+        if supplier and instance and supplier.id == instance.id:
+            raise serializers.ValidationError({
+                'supplier': 'Нельзя указывать самого себя в качестве поставщика'
+            })
+
+        # Правило 4: Проверка при создании нового объекта
+        if not instance and supplier and supplier.id == data.get('id'):
+            raise serializers.ValidationError({
+                'supplier': 'Нельзя указывать самого себя в качестве поставщика'
+            })
+        return data

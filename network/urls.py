@@ -6,8 +6,8 @@ from network.views import NetworkLinkViewSet, ProductViewSet
 app_name = NetworkConfig.name
 
 router = DefaultRouter()
-router.register(r"networks", NetworkLinkViewSet)
-router.register(r"products", ProductViewSet)
+router.register(r"networks", NetworkLinkViewSet, basename='networks')
+router.register(r"products", ProductViewSet, basename='products')
 
 urlpatterns = []
 
