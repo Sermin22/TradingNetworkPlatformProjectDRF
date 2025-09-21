@@ -191,10 +191,14 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
-
 ## После запуска:
 
+После запуска создайте суперюзера:
+```
+python manage.py createsuperuser
+```
 - Бэкенд доступен по адресу: http://127.0.0.1:8000/ или http://localhost:8000/
+- Админ-панель: http://127.0.0.1:8000/admin/ или http://localhost:8000/admin/
 - Swagger-документация: http://127.0.0.1:8000/swagger/ или http://localhost:8000/swagger/
 - Альтернативная документация: http://127.0.0.1:8000/redoc/ или http://localhost:8000/redoc/
 
