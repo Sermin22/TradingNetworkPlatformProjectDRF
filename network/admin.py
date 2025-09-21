@@ -7,7 +7,7 @@ from django.contrib import messages
 class NetworkLinkAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "email", "country", "city", "street", "house_number", "network_type",
                     "supplier", "supplier_id", "debt_to_supplier", "created_at", "level")
-    list_filter = ("city", "country", "created_at")
+    list_filter = ("city", "country", "network_type", "created_at")
     search_fields = ("name", "email", "city", "country")
 
     # Регистрируем действие в админке
